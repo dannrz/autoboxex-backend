@@ -1,0 +1,32 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+    - .:/var/www/html
+    environment:
+    - APP_ENV=local
+    - APP_DEBUG=true
+    - APP_KEY=base64:…
+  web:
+    image: nginx:alpine
+    ports:
+     - 80:80
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+    - app
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    volumes:
+    - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
