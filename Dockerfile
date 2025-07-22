@@ -1,15 +1,15 @@
-FROM php:8.4.10-fpm
+FROM php:8.3.12-apache-bullseye
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    libzip-dev \
-    unzip \
-    git && \
-    docker-php-ext-install pdo pdo_mysql zip ctype curl dom mbstring openssl xml && \
-    a2enmod rewrite
+RUN docker-php-source extract \
+    # do important things \
+    && docker-php-source delete
 
-WORKDIR /var/www/html
-COPY . .
-RUN chown -R www-data:www-data /var/www
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+RUN a2enmod rewrite && service apache2 restart
 
 EXPOSE 80
