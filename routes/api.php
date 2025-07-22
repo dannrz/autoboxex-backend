@@ -10,7 +10,7 @@ Route::prefix('v1')->group(function () {
         return response()->json(
             [
                 'message'    => 'Welcome to the API!',
-                'route' => __DIR__ . '/../routes/api.php',
+                'path' => __DIR__ . '/../routes/api.php',
             ]
         );
     })->middleware('auth:sanctum');
