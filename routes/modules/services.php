@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/services', function () {
+Route::get('/', function () {
     return response()->json([
         'message' => 'List of services',
         'services' => [

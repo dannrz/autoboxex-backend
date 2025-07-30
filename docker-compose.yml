@@ -1,10 +1,12 @@
 services:
   web:
-    image: php-ex:1.0.2
+    image: autoboxex:latest
     ports:
       - 80:80
     volumes:
       - .:/var/www/html/
+    networks:
+      - backend
   database:
     image: mysql:8.4.2
     restart: always
@@ -17,5 +19,10 @@ services:
       - 3306:3306
     volumes:
       - my-db:/var/lib/mysql
+    networks:
+      - backend
 volumes:
   my-db:
+
+networks:
+  backend:
