@@ -44,26 +44,35 @@ class AuthController extends Controller
                 'message' => 'Contraseña incorrecta',
             ], JsonResponse::HTTP_UNAUTHORIZED);
         }
+
         $token = $user->createToken('auth_token');
         $token->accessToken->expires_at = now()->addMinutes(config('sanctum.expiration'));
         $token->accessToken->save();
 
-        Auth::login($user);
-
         return Response::json([
             'user' => $user,
-            'token' => $token->plainTextToken,
-            'type' => 'bearer',
+            'access_token' => $token->plainTextToken,
+            'token_type' => 'Bearer',
             'expires_at' => $token->accessToken->expires_at,
         ], JsonResponse::HTTP_OK);
     }
 
-    public function logout(Request $request): JsonResponse
+    public function logout(): JsonResponse
     {
         $user = Auth::user();
 
+        if (!$user) {
+            return Response::json([
+                'message' => 'No authenticated user found',
+            ], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        foreach ($user->tokens as $token) {
+            $token->delete();
+        }
+
         return Response::json([
-            'message' => $user,
+            'message' => 'User logged out successfully',
         ], JsonResponse::HTTP_OK);
     }
 }
