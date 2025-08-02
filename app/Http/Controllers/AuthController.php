@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
@@ -46,14 +47,17 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token');
-        $token->accessToken->expires_at = now()->addMinutes(config('sanctum.expiration'));
+        $expiration = now()->addMinutes((int) Env::get('SANCTUM_EXPIRATION', 120))
+            ->toIso8601String();
+
+        $token->accessToken->expires_at = $expiration;
         $token->accessToken->save();
 
         return Response::json([
             'user' => $user,
             'access_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
-            'expires_at' => $token->accessToken->expires_at,
+            'expires_at' => $expiration,
         ], JsonResponse::HTTP_OK);
     }
 
@@ -61,18 +65,12 @@ class AuthController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
-            return Response::json([
-                'message' => 'No authenticated user found',
-            ], JsonResponse::HTTP_UNAUTHORIZED);
-        }
-
         foreach ($user->tokens as $token) {
             $token->delete();
         }
 
         return Response::json([
-            'message' => 'User logged out successfully',
+            'message' => 'Sesion finalizada',
         ], JsonResponse::HTTP_OK);
     }
 }
