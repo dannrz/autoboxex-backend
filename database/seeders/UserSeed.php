@@ -16,10 +16,19 @@ class UserSeed extends Seeder
     {
         User::create([
             'id' => null,
-            'name' => 'Daniel R',
+            'name' => 'Daniel Rodríguez',
             'email' => 'admin@admin.com',
             'username' => 'dann',
-            'password' => Hash::make('qwerT5')
+            'password' => Hash::make('qwerT5'),
+            'permission' => 'admin',
+        ]);
+        User::create([
+            'id' => null,
+            'name' => 'Alexander Ramirez',
+            'email' => 'almacen@admin.com',
+            'username' => 'lxndr',
+            'password' => Hash::make('asdfG2'),
+            'permission' => 'almacen',
         ]);
     }
 }
