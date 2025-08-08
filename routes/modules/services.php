@@ -10,4 +10,4 @@ Route::get('/', function () {
             'service2' => 'Description of service 2',
         ],
     ]);
-})->name('services.list');
+})->middleware('admin');

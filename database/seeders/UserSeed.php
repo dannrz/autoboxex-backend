@@ -20,7 +20,7 @@ class UserSeed extends Seeder
             'email' => 'admin@admin.com',
             'username' => 'dann',
             'password' => Hash::make('qwerT5'),
-            'permission' => 'admin',
+            'role' => 'admin',
         ]);
         User::create([
             'id' => null,
@@ -28,7 +28,7 @@ class UserSeed extends Seeder
             'email' => 'almacen@admin.com',
             'username' => 'lxndr',
             'password' => Hash::make('asdfG2'),
-            'permission' => 'almacen',
+            'role' => 'almacen',
         ]);
     }
 }
