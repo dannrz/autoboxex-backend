@@ -20,7 +20,7 @@ class UserSeed extends Seeder
             'email' => 'admin@admin.com',
             'username' => 'dann',
             'password' => Hash::make('qwerT5'),
-            'role' => 'admin',
+            'role_id' => 1,
         ]);
         User::create([
             'id' => null,
@@ -28,7 +28,15 @@ class UserSeed extends Seeder
             'email' => 'almacen@admin.com',
             'username' => 'lxndr',
             'password' => Hash::make('asdfG2'),
-            'role' => 'almacen',
+            'role_id' => 2,
+        ]);
+        User::create([
+            'id' => null,
+            'name' => 'dios johnson',
+            'email' => 'diosj@admin.com',
+            'username' => 'dj',
+            'password' => Hash::make('qwerT5'),
+            'role_id' => 1,
         ]);
     }
 }

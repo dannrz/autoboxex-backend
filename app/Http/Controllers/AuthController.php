@@ -28,7 +28,7 @@ class AuthController extends Controller
         }
         $validatedData = $data->validated();
 
-        $user = User::query()
+        $user = User::with('role')
             ->where('username', '=', $validatedData['username'])
             ->first();
 

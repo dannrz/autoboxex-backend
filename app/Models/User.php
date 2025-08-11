@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -32,6 +33,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'role_id',
+        "email_verified_at",
+        "created_at",
+        "updated_at",
     ];
 
     /**
@@ -47,7 +52,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function isAdmin(): bool {
-        return $this->role === 'admin';
+    public function isAdmin(): bool
+    {
+        return $this->role->role_name === 'admin';
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 }
