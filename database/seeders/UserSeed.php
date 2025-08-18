@@ -15,7 +15,7 @@ class UserSeed extends Seeder
     public function run(): void
     {
         User::create([
-            'id' => null,
+            // 'id' => null,
             'name' => 'Daniel Rodríguez',
             'email' => 'admin@admin.com',
             'username' => 'dann',
@@ -23,7 +23,7 @@ class UserSeed extends Seeder
             'role_id' => 1,
         ]);
         User::create([
-            'id' => null,
+            // 'id' => null,
             'name' => 'Alexander Ramirez',
             'email' => 'almacen@admin.com',
             'username' => 'lxndr',
@@ -31,7 +31,7 @@ class UserSeed extends Seeder
             'role_id' => 2,
         ]);
         User::create([
-            'id' => null,
+            // 'id' => null,
             'name' => 'dios johnson',
             'email' => 'diosj@admin.com',
             'username' => 'dj',
