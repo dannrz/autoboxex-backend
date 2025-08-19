@@ -11,3 +11,7 @@ Route::get('/', function () {
         ],
     ]);
 })->middleware('admin');
+
+Route::get('/tools', "\App\Http\Controllers\CarPartsController@all")
+    ->name('tools.all')
+    ->middleware('admin');
