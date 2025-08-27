@@ -2,16 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return response()->json([
-        'message' => 'List of services',
-        'services' => [
-            'service1' => 'Description of service 1',
-            'service2' => 'Description of service 2',
-        ],
-    ]);
-})->middleware('admin');
-
 Route::get('/tools', "\App\Http\Controllers\CarPartsController@all")
     ->name('tools.all')
     ->middleware('admin');
+
+Route::get('/', "\App\Http\Controllers\CatalogsController@getServices")
+    ->name('services.all');
+
+Route::get('/states', "\App\Http\Controllers\CatalogsController@getStates")
+    ->name('states.all');
