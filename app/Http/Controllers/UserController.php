@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    /**
+     * @param Request $request contains the current and new password from an authenticated user via Sanctum
+     * @return JsonResponse with success or error message
+     */
     public function changePassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -43,5 +47,19 @@ class UserController extends Controller
         return Response::json([
             'message' => 'La contraseña se ha cambiado correctamente, la sesión se cerrará y podrá acceder con su nueva contraseña.'
         ], JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * @return JsonResponse with all users including roles
+     */
+    public function getAll(): JsonResponse
+    {
+        $users = User::with('role')
+            ->get();
+
+        return Response::json(
+            $users,
+            JsonResponse::HTTP_OK
+        );
     }
 }

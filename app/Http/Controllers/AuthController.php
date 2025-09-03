@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    /**
+     * @param Request $request with username and password
+     * @return JsonResponse with user information and access token or error message
+     */
     public function login(Request $request): JsonResponse
     {
         $data = Validator::make($request->all(), [
@@ -61,6 +65,10 @@ class AuthController extends Controller
         ], JsonResponse::HTTP_OK);
     }
 
+    /**
+     * @use Auth
+     * @return JsonResponse with success message after destroying the tokens of the authenticated user
+     */
     public function logout(): JsonResponse
     {
         $user = Auth::user();
