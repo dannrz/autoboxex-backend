@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\PasswordRestore;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -61,5 +63,46 @@ class UserController extends Controller
             $users,
             JsonResponse::HTTP_OK
         );
+    }
+
+    /** 
+     * @param Request $request contains the username requesting a password restore
+     * @return JsonResponse with a password restore request created for the user
+     * @throws Exception if the user is not found or if there is an error creating the password restore request
+     */
+    public function requestPasswordRestore(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $user = User::query()
+            ->where('username', $request->username)
+            ->first();
+
+        try {
+            PasswordRestore::create([
+                'user_id' => $user->id,
+                'password' => Hash::make($request->password),
+                'requested_at' => now(),
+            ]);
+
+            return Response::json([
+                'message' => 'Se ha solicitado la restauración de la contraseña.'
+            ], JsonResponse::HTTP_CREATED);
+        } catch (Exception $e) {
+
+            return Response::json([
+                'message' => 'Error al procesar la solicitud.'
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
