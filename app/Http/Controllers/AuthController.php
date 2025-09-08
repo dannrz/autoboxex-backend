@@ -50,6 +50,12 @@ class AuthController extends Controller
             ], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
+        if ($user->status == 0) {
+            return Response::json([
+                'message' => 'Usuario inactivo, contacte al administrador',
+            ], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $token = $user->createToken('auth_token');
         $expiration = now()->addMinutes((int) Env::get('SANCTUM_EXPIRATION', 120))
             ->toIso8601String();

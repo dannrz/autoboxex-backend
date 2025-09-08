@@ -74,7 +74,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'username' => ['required', 'string'],
-            'password' => ['required', 'string'],
+            'newPassword' => ['required', 'string', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/', 'min:6'],
         ]);
 
         if ($validator->fails()) {
@@ -84,16 +84,37 @@ class UserController extends Controller
             );
         }
 
+        $validated = $validator->validated();
+
         $user = User::query()
-            ->where('username', $request->username)
+            ->where('username', $validated['username'])
             ->first();
 
+        if (!$user) {
+            return Response::json([
+                'message' => 'Usuario no encontrado. Verifique el nombre de usuario e intente nuevamente.',
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $existingRequest = PasswordRestore::query()
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($existingRequest) {
+            return Response::json([
+                'message' => 'Ya existe una solicitud de restauración de contraseña para este usuario. Por favor, contacte al administrador para su aprobación.',
+            ], JsonResponse::HTTP_CONFLICT);
+        }
+
         try {
-            PasswordRestore::create([
+            PasswordRestore::query()->insert([
                 'user_id' => $user->id,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make($validated['newPassword']),
                 'requested_at' => now(),
             ]);
+            User::query()
+                ->where('id', $user->id)
+                ->update(['status' => 0]);
 
             return Response::json([
                 'message' => 'Se ha solicitado la restauración de la contraseña.'
