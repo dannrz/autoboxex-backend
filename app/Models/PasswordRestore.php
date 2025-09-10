@@ -9,14 +9,16 @@ class PasswordRestore extends Model
 {
     protected $table = 'password_restore_request';
 
-    protected $fillable = [
-        'user_id',
+    protected $hidden = [
+        'id',
         'password',
         'requested_at',
     ];
 
-    protected $casts = [
-        'requested_at' => 'datetime',
+    protected $fillable = [
+        'user_id',
+        'password',
+        'requested_at',
     ];
 
     public function user(): BelongsTo

@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\PasswordRestore;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Mockery\Generator\StringManipulation\Pass\Pass;
 
 class UserController extends Controller
 {
@@ -110,7 +112,7 @@ class UserController extends Controller
             PasswordRestore::query()->insert([
                 'user_id' => $user->id,
                 'password' => Hash::make($validated['newPassword']),
-                'requested_at' => now(),
+                'requested_at' => Carbon::now(),
             ]);
             User::query()
                 ->where('id', $user->id)
@@ -125,5 +127,73 @@ class UserController extends Controller
                 'message' => 'Error al procesar la solicitud.'
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * @return JsonResponse with all password change requests including user details
+     */
+    public function getPasswordChangeRequests(): JsonResponse
+    {
+        $requests = PasswordRestore::with('user')
+            ->get();
+        $requests->map(function ($request) {
+            $request->requested_at_formatted = Carbon::parse($request->requested_at)->isoFormat('dddd, DD [de] MMMM [de] YYYY [-] HH:mm:ss');
+        });
+
+        return Response::json(
+            $requests,
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    /**
+     * @param Request $request contains the user_id and accept boolean to approve or reject a password change request
+     * @return JsonResponse with success or error message
+     */
+    public function respondPasswordRequest(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'accept' => ['required', 'boolean'],
+        ]);
+
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $validated = $validator->validated();
+
+        $passwordRequest = PasswordRestore::with('user')
+            ->where('user_id', $validated['user_id'])
+            ->first();
+
+
+        if (!$passwordRequest) {
+            return Response::json([
+                'message' => 'No se encontró una solicitud de cambio de contraseña para este usuario.',
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        if ($validated['accept']) {
+            User::query()
+                ->where('id', $validated['user_id'])
+                ->update([
+                    'password' => $passwordRequest->password,
+                    'status' => 1,
+                ]);
+        }
+
+        PasswordRestore::query()
+            ->where('user_id', $validated['user_id'])
+            ->delete();
+
+        return Response::json([
+            'message' => $validated['accept'] ? "La contraseña ha sido actualizada y el usuario de {$passwordRequest->user->name} ha sido reactivado." : 'La solicitud de cambio de contraseña ha sido rechazada.',
+            'status' => $validated['accept'] ? 'accepted' : 'rejected',
+        ], JsonResponse::HTTP_OK);
     }
 }
