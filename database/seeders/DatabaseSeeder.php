@@ -26,6 +26,9 @@ class DatabaseSeeder extends Seeder
             ToolsSeeder::class,
             ServicesSeeder::class,
             StatesSeeder::class,
+            InsumosSeeder::class,
+            CostosSeeder::class,
+            PreciosSeeder::class,
         ]);
     }
 }
