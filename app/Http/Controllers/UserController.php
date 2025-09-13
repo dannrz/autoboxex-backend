@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
-use Mockery\Generator\StringManipulation\Pass\Pass;
 
 class UserController extends Controller
 {
@@ -59,6 +58,7 @@ class UserController extends Controller
     public function getAll(): JsonResponse
     {
         $users = User::with('role')
+            ->with('passwordRestores')
             ->get();
 
         return Response::json(
@@ -194,6 +194,40 @@ class UserController extends Controller
         return Response::json([
             'message' => $validated['accept'] ? "La contraseña ha sido actualizada y el usuario de {$passwordRequest->user->name} ha sido reactivado." : 'La solicitud de cambio de contraseña ha sido rechazada.',
             'status' => $validated['accept'] ? 'accepted' : 'rejected',
+        ], JsonResponse::HTTP_OK);
+    }
+
+    public function changeStatusUser(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => ['required', 'string', 'exists:users,username'],
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $validated = $validator->validated();
+
+        $user = User::query()
+            ->where('username', $validated['username'])
+            ->first();
+
+        if (!$user) {
+            return Response::json([
+                'message' => 'Usuario no encontrado.',
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $user->status = $user->status == 1 ? 0 : 1;
+        $user->save();
+
+        return Response::json([
+            'message' => 'El estado del usuario ha sido actualizado correctamente.',
+            'status_user' => $user->status,
         ], JsonResponse::HTTP_OK);
     }
 }

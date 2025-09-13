@@ -9,3 +9,5 @@ Route::get('/request-password-changes', 'App\Http\Controllers\UserController@get
     ->middleware('admin');
 Route::patch('/respond-password-request', 'App\Http\Controllers\UserController@respondPasswordRequest')
     ->middleware('admin');
+Route::patch('change-status', 'App\Http\Controllers\UserController@changeStatusUser')
+    ->middleware('admin');
