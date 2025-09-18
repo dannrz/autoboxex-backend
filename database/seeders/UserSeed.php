@@ -17,14 +17,12 @@ class UserSeed extends Seeder
     {
         User::create([
             'name' => 'Daniel Rodríguez',
-            'email' => 'admin@admin.com',
             'username' => 'dann',
             'password' => Hash::make('qwerT5'),
             'role_id' => 1,
         ]);
         User::create([
             'name' => 'Alexander Ramirez',
-            'email' => 'almacen@admin.com',
             'username' => 'lxndr',
             'password' => Hash::make('asdfG2'),
             'role_id' => 2,
@@ -52,7 +50,6 @@ class UserSeed extends Seeder
             }
             User::create([
                 'name' => "{$user->NOMBREUSUARIO} {$user->APELLIDOUSUARIO}",
-                'email' => fake()->unique()->safeEmail(),
                 'username' => $user->IDUSUARIO,
                 'password' => Hash::make($user->CONTRASENAUSUARIO),
                 'role_id' => $user->role_id,
