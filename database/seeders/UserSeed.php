@@ -25,7 +25,7 @@ class UserSeed extends Seeder
             'name' => 'Alexander Ramirez',
             'username' => 'lxndr',
             'password' => Hash::make('asdfG2'),
-            'role_id' => 2,
+            'role_id' => 1,
         ]);
 
         $oldUsers = Usuario::all();
