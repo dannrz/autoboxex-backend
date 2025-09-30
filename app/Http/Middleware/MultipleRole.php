@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminRole
+class MultipleRole
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,10 @@ class AdminRole
     {
         $user = $request->user();
 
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('admin') || $user->hasRole('admtivo')) {
             return $next($request);
         }
-        
+
         return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminRole;
+use App\Http\Middleware\MultipleRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->append(HandleCors::class)
             ->alias([
                 'admin' => AdminRole::class,
+                'multiadmin' => MultipleRole::class,
             ])
             ->statefulApi();
     })

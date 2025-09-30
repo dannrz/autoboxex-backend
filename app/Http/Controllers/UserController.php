@@ -132,13 +132,19 @@ class UserController extends Controller
     /**
      * @return JsonResponse with all password change requests including user details
      */
-    public function getPasswordChangeRequests(): JsonResponse
+    public function getPasswordChangeRequests(Request $request): JsonResponse
     {
-        $requests = PasswordRestore::with('user')
-            ->get();
-        $requests->map(function ($request) {
-            $request->requested_at_formatted = Carbon::parse($request->requested_at)->isoFormat('dddd, DD [de] MMMM [de] YYYY [-] HH:mm:ss');
-        });
+        $requests = PasswordRestore::with('user')->get();
+
+        if ($request->query('filter') == 'notifications') {
+            $requests->map(function ($req) {
+                $req->requested_at_formatted = Carbon::parse($req->requested_at)->diffForHumans();
+            });
+        } else {
+            $requests->map(function ($request) {
+                $request->requested_at_formatted = Carbon::parse($request->requested_at)->isoFormat('dddd, DD [de] MMMM [de] YYYY [-] HH:mm:ss');
+            });
+        }
 
         return Response::json(
             $requests,
@@ -197,6 +203,10 @@ class UserController extends Controller
         ], JsonResponse::HTTP_OK);
     }
 
+    /** 
+     * @param Request $request contains the username of the user to change status
+     * @return json with change status of a user (active/inactive) by username
+     */
     public function changeStatusUser(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

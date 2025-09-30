@@ -54,9 +54,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function isAdmin(): bool
+    public function hasRole(string $role): bool
     {
-        return $this->role->role_name === 'admin';
+        return $this->role->role_name === $role;
     }
 
     public function role(): BelongsTo
