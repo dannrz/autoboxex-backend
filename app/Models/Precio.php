@@ -9,6 +9,6 @@ class Precio extends Model
 {
     use HasFactory;
 
-    protected $table = 'precios';
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $table = 'Precio';
+    // protected $hidden = ['created_at', 'updated_at'];
 }

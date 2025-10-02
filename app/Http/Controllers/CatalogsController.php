@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,22 @@ class CatalogsController extends Controller
 
         return Response::json(
             $states,
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    public function getClients(Request $request): JsonResponse
+    {
+        if ($request->has('id')) {
+            $clients = Cliente::query()
+                ->where('idCliente', $request->query('id'))
+                ->first();
+        } else {
+            $clients = Cliente::all(['IdCliente', 'Nombre']);
+        }
+
+        return Response::json(
+            $clients,
             JsonResponse::HTTP_OK
         );
     }
