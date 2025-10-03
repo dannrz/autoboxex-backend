@@ -1,43 +1,25 @@
 services:
-  # web:
-  #   image: autoboxex:latest
-  #   ports:
-  #     - 80:80
-  #   volumes:
-  #     - .:/var/www/html/
-  #   networks:
-  #     - backend
-  database:
-    # image: mysql:8.4.2
-    # restart: always
-    # environment:
-    #   MYSQL_DATABASE: 'laravel'
-    #   MYSQL_USER: 'user'
-    #   MYSQL_PASSWORD: 'password'
-    #   MYSQL_ROOT_PASSWORD: 'password'
-    # ports:
-    #   - 3306:3306
-    # volumes:
-    #   - my-db:/var/lib/mysql
-    # networks:
-    #   - backend
-    container_name: mssql-db
-    hostname: mssql-db
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      ACCEPT_EULA: 'Y'
-      MSSQL_SA_PASSWORD: 'Passw0rd'
-      MSSQL_DATA_DIR: /var/opt/mssql/data
-      MSSQL_PID: 'Developer' 
-      MSSQL_TCP_PORT: 1433 
-    ports: 
-      - 1433:1433
+  web:
+    image: autoboxex:latest
+    ports:
+      - 80:80
     volumes:
-      - my-db:/var/opt/mssql/data
+      - .:/var/www/html/
     networks:
       - backend
-volumes:
-  my-db:
-
-networks:
-  backend:
+  # database:
+  #   container_name: mssql-db
+  #   hostname: mssql-db
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   environment:
+  #     ACCEPT_EULA: 'Y'
+  #     MSSQL_SA_PASSWORD: 'Passw0rd'
+  #     MSSQL_DATA_DIR: /var/opt/mssql/data
+  #     MSSQL_PID: 'Developer' 
+  #     MSSQL_TCP_PORT: 1433 
+  #   ports: 
+  #     - 1433:1433
+  #   volumes:
+  #     - my-db:/var/opt/mssql/data
+  #   networks:
+  #     - backend
