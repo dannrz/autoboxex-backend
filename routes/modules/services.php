@@ -21,5 +21,5 @@ Route::get('/', "\App\Http\Controllers\CatalogsController@getServices")
 Route::get('/states', "\App\Http\Controllers\CatalogsController@getStates")
     ->name('states.all');
 
-Route::get('/clients', "\App\Http\Controllers\CatalogsController@getClients")
+Route::get('/clients', 'App\Http\Controllers\ServicesController@getClients')
     ->name('clients.all');
