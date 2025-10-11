@@ -18,7 +18,7 @@ class ServicesController extends Controller
     public function getClients(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'id' => ['sometimes', 'integer', 'exists:clientes,IdCliente'],
+            'id' => ['sometimes', 'integer', 'exists:Cliente,IdCliente'],
         ]);
 
         if ($validator->fails()) {
@@ -59,7 +59,7 @@ class ServicesController extends Controller
     public function getInsumos(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'id' => ['required', 'integer', 'exists:EntSalDet,IdMovimiento'],
+            'id' => ['required', 'integer'],
         ]);
 
         if ($validator->fails()) {
