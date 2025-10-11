@@ -23,3 +23,6 @@ Route::get('/states', "\App\Http\Controllers\CatalogsController@getStates")
 
 Route::get('/clients', 'App\Http\Controllers\ServicesController@getClients')
     ->name('clients.all');
+
+Route::get('/insumos', 'App\Http\Controllers\ServicesController@getInsumos')
+    ->name('insumos.all');
