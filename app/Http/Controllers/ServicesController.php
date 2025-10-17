@@ -6,6 +6,7 @@ use App\Models\Cliente;
 use App\Models\InOut;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
@@ -37,7 +38,7 @@ class ServicesController extends Controller
                 ->first();
 
             $clients->servicios->map(function ($service) {
-                $service->vehiculo->marca->Marca = trim($service->vehiculo->marca->Marca);
+                $service->vehiculo->marca->Marca = Str::trim($service->vehiculo->marca->Marca);
                 return $service;
             });
         }
