@@ -124,33 +124,6 @@ RUN sed -i 's/user = www-data/user = www/g' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/group = www-data/group = www/g' /usr/local/etc/php-fpm.d/www.conf
 
 # Configurar Nginx
-# COPY <<EOF /etc/nginx/sites-available/default
-# server {
-#     listen 8000;
-#     server_name _;
-#     root /var/www/html/public;
-#     index index.php index.html;
-
-#     client_max_body_size 20M;
-
-#     location / {
-#         try_files \$uri \$uri/ /index.php?\$query_string;
-#     }
-
-#     location ~ \.php$ {
-#         fastcgi_pass 127.0.0.1:9000;
-#         fastcgi_index index.php;
-#         fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
-#         include fastcgi_params;
-#         fastcgi_hide_header X-Powered-By;
-#     }
-
-#     location ~ /\.(?!well-known).* {
-#         deny all;
-#     }
-# }
-# EOF
-
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Configurar Supervisor
