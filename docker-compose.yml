@@ -1,25 +1,19 @@
 services:
-  web:
-    image: autoboxex:latest
+  frontend:
+    image: autoboxex-vue:1.0.0
+    container_name: autoboxex-frontend
     ports:
       - 80:80
-    volumes:
-      - .:/var/www/html/
     networks:
-      - backend
-  # database:
-  #   container_name: mssql-db
-  #   hostname: mssql-db
-  #   image: mcr.microsoft.com/mssql/server:2022-latest
-  #   environment:
-  #     ACCEPT_EULA: 'Y'
-  #     MSSQL_SA_PASSWORD: 'Passw0rd'
-  #     MSSQL_DATA_DIR: /var/opt/mssql/data
-  #     MSSQL_PID: 'Developer' 
-  #     MSSQL_TCP_PORT: 1433 
-  #   ports: 
-  #     - 1433:1433
-  #   volumes:
-  #     - my-db:/var/opt/mssql/data
-  #   networks:
-  #     - backend
+      - autoboxex-network
+  backend:
+    image: autoboxex-laravel:1.0.1
+    container_name: autoboxex-backend
+    ports:
+      - 8000:8000
+    networks:
+      - autoboxex-network
+networks:
+  autoboxex-network:
+    driver: bridge
+name: autoboxex
