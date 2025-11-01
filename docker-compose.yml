@@ -11,6 +11,8 @@ services:
     container_name: autoboxex-backend
     ports:
       - 8000:8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - autoboxex-network
 networks:
