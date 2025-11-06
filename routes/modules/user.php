@@ -8,6 +8,6 @@ Route::get('/users', 'App\Http\Controllers\UserController@getAll')
 Route::get('/request-password-changes', 'App\Http\Controllers\UserController@getPasswordChangeRequests')
     ->middleware('multiadmin');
 Route::patch('/respond-password-request', 'App\Http\Controllers\UserController@respondPasswordRequest')
-    ->middleware('admin');
+    ->middleware('multiadmin');
 Route::patch('change-status', 'App\Http\Controllers\UserController@changeStatusUser')
     ->middleware('multiadmin');

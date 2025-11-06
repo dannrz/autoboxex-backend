@@ -153,6 +153,7 @@ class UserController extends Controller
     }
 
     /**
+     * @api /user/respond-password-request
      * @param Request $request contains the user_id and accept boolean to approve or reject a password change request
      * @return JsonResponse with success or error message
      */
