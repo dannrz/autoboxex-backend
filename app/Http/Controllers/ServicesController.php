@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use App\Models\InOut;
+use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 class ServicesController extends Controller
 {
     /**
+     * @api {get} /services/clients Get Clients and their Services
      * @param Request $request with optional 'id' query parameter of id client
      * @return JsonResponse with clients and their services or all clients if no id is provided
      */
@@ -20,6 +22,7 @@ class ServicesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => ['sometimes', 'integer', 'exists:Cliente,IdCliente'],
+            'inOrder' => ['sometimes', 'integer', 'exists:Servicio,FolioOE'],
         ]);
 
         if ($validator->fails()) {
@@ -37,6 +40,8 @@ class ServicesController extends Controller
                 ->where('idCliente', $request->query('id'))
                 ->first();
 
+            $clients->direccionFull = Str::trim("{$clients->Direccion} {$clients->Colonia} {$clients->Poblacion} {$clients->Estado} {$clients->CP}");
+
             $clients->servicios->map(function ($service) {
                 $service->vehiculo->marca->Marca = Str::trim($service->vehiculo->marca->Marca);
                 return $service;
@@ -45,6 +50,19 @@ class ServicesController extends Controller
 
         if (!$request->has('id')) {
             $clients = Cliente::all(['IdCliente', 'Nombre']);
+        }
+
+        if (!$request->has('id') && $request->has('inOrder')) {
+            $clients = Cliente::query()
+                ->with('servicios', function ($query) use ($request) {
+                    $query->where('FolioOE', $request->query('inOrder'));
+                })
+                ->whereHas('servicios', function ($query) use ($request) {
+                    $query->where('FolioOE', $request->query('inOrder'));
+                })
+                ->firstOrFail();
+
+            $clients->direccionFull = Str::trim("{$clients->Direccion} {$clients->Colonia} {$clients->Poblacion} {$clients->Estado} {$clients->CP}");
         }
 
         return Response::json(
@@ -76,6 +94,19 @@ class ServicesController extends Controller
 
         return Response::json(
             $inouts,
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    public function getInOrders(): JsonResponse
+    {
+        $orders = Service::select('FolioOE')
+            ->distinct()
+            ->orderBy('FolioOE', 'desc')
+            ->get();
+
+        return Response::json(
+            $orders,
             JsonResponse::HTTP_OK
         );
     }
