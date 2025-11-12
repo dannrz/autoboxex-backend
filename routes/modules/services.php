@@ -29,3 +29,6 @@ Route::get('/insumos', 'App\Http\Controllers\ServicesController@getInsumos')
 
 Route::get('/oe', 'App\Http\Controllers\ServicesController@getInOrders')
     ->name('orders.all');
+
+Route::get('/plates', "App\Http\Controllers\ServicesController@getPlates")
+    ->name('plates.all');

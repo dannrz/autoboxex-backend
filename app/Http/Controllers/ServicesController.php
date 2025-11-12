@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\InOut;
 use App\Models\Service;
+use App\Models\Vehicles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -55,7 +56,9 @@ class ServicesController extends Controller
         if (!$request->has('id') && $request->has('inOrder')) {
             $clients = Cliente::query()
                 ->with('servicios', function ($query) use ($request) {
-                    $query->where('FolioOE', $request->query('inOrder'));
+                    $query->where('FolioOE', $request->query('inOrder'))->with('vehiculo', function ($queryVeh) {
+                        $queryVeh->with('marca');
+                    });
                 })
                 ->whereHas('servicios', function ($query) use ($request) {
                     $query->where('FolioOE', $request->query('inOrder'));
@@ -63,6 +66,11 @@ class ServicesController extends Controller
                 ->firstOrFail();
 
             $clients->direccionFull = Str::trim("{$clients->Direccion} {$clients->Colonia} {$clients->Poblacion} {$clients->Estado} {$clients->CP}");
+
+            $clients->servicios->map(function ($service) {
+                $service->vehiculo->marca->Marca = Str::trim($service->vehiculo->marca->Marca);
+                return $service;
+            });
         }
 
         return Response::json(
@@ -107,6 +115,29 @@ class ServicesController extends Controller
 
         return Response::json(
             $orders,
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    public function getPlates(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'idCliente' => ['required', 'string', 'exists:ClienteVeh,IdCliente'],
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $plates = Vehicles::select('Placas')
+            ->where('IdCliente', $request->query('idCliente'))
+            ->get();
+
+        return Response::json(
+            $plates,
             JsonResponse::HTTP_OK
         );
     }
