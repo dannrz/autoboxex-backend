@@ -1,13 +1,13 @@
 services:
   frontend:
-    image: autoboxex-vue:1.0.0
+    image: autoboxex-vue:1.0.1
     container_name: autoboxex-frontend
     ports:
       - 80:80
     networks:
       - autoboxex-network
   backend:
-    image: autoboxex-laravel:1.0.1
+    image: autoboxex-laravel:1.0.2
     container_name: autoboxex-backend
     ports:
       - 8000:8000

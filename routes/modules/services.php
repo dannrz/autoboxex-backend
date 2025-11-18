@@ -15,12 +15,6 @@ Route::get('/precios', "\App\Http\Controllers\CarPartsController@getPrecios")
 Route::get('/costos', "\App\Http\Controllers\CarPartsController@getCostos")
     ->name('costos.all');
 
-Route::get('/', "\App\Http\Controllers\CatalogsController@getServices")
-    ->name('services.all');
-
-Route::get('/states', "\App\Http\Controllers\CatalogsController@getStates")
-    ->name('states.all');
-
 Route::get('/clients', 'App\Http\Controllers\ServicesController@getClients')
     ->name('clients.all');
 

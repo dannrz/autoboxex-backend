@@ -49,6 +49,7 @@ RUN composer install --no-dev --no-scripts --no-autoloader --optimize-autoloader
 
 # Copiar el código de la aplicación
 COPY . .
+COPY .env.production .env
 
 # Generar autoloader optimizado
 RUN composer dump-autoload --optimize --classmap-authoritative
