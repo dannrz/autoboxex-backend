@@ -3,15 +3,10 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Models\PasswordRestore;
-use App\Models\User;
+use App\Models\{PasswordRestore, User};
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\{JsonResponse, Request};
+use Illuminate\Support\Facades\{Auth, Hash, Response, Validator};
 
 class UserController extends Controller
 {

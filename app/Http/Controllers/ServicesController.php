@@ -2,17 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
-use App\Models\InOut;
-use App\Models\Service;
-use App\Models\User;
-use App\Models\Vehicles;
+use App\Models\{Cliente, InOut, Service, User, Vehicles};
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\{JsonResponse, Request};
+use Illuminate\Support\Facades\{Auth, Response, Validator};
 use Illuminate\Support\Str;
 
 class ServicesController extends Controller

@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Costo;
-use App\Models\Insumo;
-use App\Models\Precio;
-use App\Models\Tool;
+use App\Models\{Costo, Insumo, Precio, Tool};
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\Response;
 
 class CarPartsController extends Controller
