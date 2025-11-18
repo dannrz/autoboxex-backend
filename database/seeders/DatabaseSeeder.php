@@ -17,8 +17,6 @@ class DatabaseSeeder extends Seeder
             RolesSeed::class,
             UserSeed::class,
             ToolsSeeder::class,
-            ServicesSeeder::class,
-            StatesSeeder::class,
             InsumosSeeder::class,
         ]);
     }
