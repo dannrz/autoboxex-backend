@@ -28,7 +28,9 @@ Route::get('/insumos', 'App\Http\Controllers\ServicesController@getInsumos')
     ->name('insumos.all');
 
 Route::get('/oe', 'App\Http\Controllers\ServicesController@getInOrders')
-    ->name('orders.all');
+    ->name('orders.all')
+    ->middleware('multiadmin');
 
 Route::get('/plates', "App\Http\Controllers\ServicesController@getPlates")
-    ->name('plates.all');
+    ->name('plates.all')
+    ->middleware('multiadmin');
