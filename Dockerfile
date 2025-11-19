@@ -30,7 +30,7 @@ RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor
 # Instalar extensiones de PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip opcache
-
+ 
 # Instalar extensiones SQL Server para PHP
 RUN pecl install sqlsrv pdo_sqlsrv \
     && docker-php-ext-enable sqlsrv pdo_sqlsrv
