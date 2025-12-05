@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Relations\HasMany, Model};
 
 class Brand extends Model
 {
@@ -12,4 +12,9 @@ class Brand extends Model
     public $timestamps = false;
 
     protected $fillable = ['IdMarca', 'Marca'];
+
+    public function modelos(): HasMany
+    {
+        return $this->hasMany(Modelo::class, 'IdMarca', 'IdMarca');
+    }
 }

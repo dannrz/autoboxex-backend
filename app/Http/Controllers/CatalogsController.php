@@ -110,4 +110,25 @@ class CatalogsController extends Controller
             JsonResponse::HTTP_OK
         );
     }
+
+    public function getModelos(): JsonResponse
+    {
+        $modelos = Brand::with('modelos')
+            ->whereNot('IdMarca', 9999)
+            ->whereNot('IdMarca', 42)
+            ->get()
+            ->flatMap(function ($brand) {
+                return $brand->modelos->map(function ($modelo) use ($brand) {
+                    return [
+                        'Marca' => Str::trim($brand->Marca),
+                        'Modelo' => Str::trim($modelo->Modelo),
+                    ];
+                });
+            });
+
+        return Response::json(
+            $modelos,
+            JsonResponse::HTTP_OK
+        );
+    }
 }
