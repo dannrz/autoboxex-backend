@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Brand;
+// use App\Models\Brand;
+use App\Models\{Brand,Modelo};
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\{Response, Validator};
 use Illuminate\Support\Str;
@@ -111,11 +112,14 @@ class CatalogsController extends Controller
         );
     }
 
+    /**
+     * @api {get} /models Get models
+     * @return models
+     */
     public function getModelos(): JsonResponse
     {
         $modelos = Brand::with('modelos')
-            ->whereNot('IdMarca', 9999)
-            ->whereNot('IdMarca', 42)
+            ->whereNotIn('IdMarca', [9999, 42, 94])
             ->get()
             ->flatMap(function ($brand) {
                 return $brand->modelos->map(function ($modelo) use ($brand) {
@@ -129,6 +133,40 @@ class CatalogsController extends Controller
         return Response::json(
             $modelos,
             JsonResponse::HTTP_OK
+        );
+    }
+
+    /**
+     * @api {post} /models Create model
+     * @param Request $request
+     * @return created model
+     */
+    public function createModel(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'marca' => ['required', 'integer',  'exists:Marca,IdMarca'],
+            'Modelo' => ['required', 'string', 'max:255', 'unique:Modelo,Modelo'],
+        ], [
+            'Modelo.unique' => "El modelo {$request->Modelo} ya existe en la base de datos.",
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $validated = $validator->validated();
+
+        $modelo = Modelo::create([
+            'IdMarca' => $validated['marca'],
+            'Modelo' => Str::trim($validated['Modelo']),
+        ]);
+
+        return Response::json(
+            $modelo,
+            JsonResponse::HTTP_CREATED
         );
     }
 }
