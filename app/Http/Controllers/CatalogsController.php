@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 // use App\Models\Brand;
-use App\Models\{Brand,Modelo};
+use App\Models\{Brand, Modelo};
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\{Response, Validator};
 use Illuminate\Support\Str;
@@ -167,6 +167,38 @@ class CatalogsController extends Controller
         return Response::json(
             $modelo,
             JsonResponse::HTTP_CREATED
+        );
+    }
+
+    public function deleteModel(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'Marca' => ['required', 'string', 'exists:Marca,Marca'],
+            'Modelo' => ['required', 'string', 'exists:Modelo,Modelo'],
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $validated = $validator->validated();
+
+        $modelo = Modelo::query()
+            ->whereHas('brand', function ($query) use ($validated) {
+                $query->where('Marca', $validated['Marca']);
+            })
+            ->where('Modelo', $validated['Modelo'])
+            ->delete();
+
+        return Response::json(
+            [
+                'message' => 'Modelo eliminado',
+                'modelo' => $modelo,
+            ],
+            JsonResponse::HTTP_OK
         );
     }
 }
