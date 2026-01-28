@@ -201,4 +201,40 @@ class CatalogsController extends Controller
             JsonResponse::HTTP_OK
         );
     }
+
+    public function updateModel(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'oldMarca' => ['required', 'string', 'exists:Marca,Marca'],
+            'oldModelo' => ['required', 'string', 'exists:Modelo,Modelo'],
+            'marca' => ['required', 'string', 'exists:Marca,Marca'],
+            'Modelo' => ['required', 'string', 'max:255', 'unique:Modelo,Modelo'],
+        ], [
+            'Modelo.unique' => "El modelo {$request->Modelo} ya existe en la base de datos.",
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $validated = $validator->validated();
+
+        $modelo = Modelo::query()
+            ->whereHas('brand', function ($query) use ($validated) {
+                $query->where('Marca', $validated['oldMarca']);
+            })
+            ->where('Modelo', $validated['oldModelo'])
+            ->update([
+                'IdMarca' => Brand::where('Marca', $validated['marca'])->first()->IdMarca,
+                'Modelo' => Str::trim($validated['Modelo']),
+            ]);
+
+        return Response::json([
+            'modelo' => $modelo,
+            'message' => 'Modelo actualizado',
+        ], JsonResponse::HTTP_OK);
+    }
 }

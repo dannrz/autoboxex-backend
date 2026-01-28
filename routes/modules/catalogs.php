@@ -9,3 +9,4 @@ Route::put('/brands/{id}', '\App\Http\Controllers\CatalogsController@updateBrand
 Route::get('/models', '\App\Http\Controllers\CatalogsController@getModelos');
 Route::post('/models', '\App\Http\Controllers\CatalogsController@createModel');
 Route::delete('/models', '\App\Http\Controllers\CatalogsController@deleteModel');
+Route::put('/models', '\App\Http\Controllers\CatalogsController@updateModel');
