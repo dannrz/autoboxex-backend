@@ -10,3 +10,4 @@ Route::get('/models', '\App\Http\Controllers\CatalogsController@getModelos');
 Route::post('/models', '\App\Http\Controllers\CatalogsController@createModel');
 Route::delete('/models', '\App\Http\Controllers\CatalogsController@deleteModel');
 Route::put('/models', '\App\Http\Controllers\CatalogsController@updateModel');
+Route::get('/refacciones', '\App\Http\Controllers\CatalogsController@getRefacciones');

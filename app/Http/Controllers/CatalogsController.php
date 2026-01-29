@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-// use App\Models\Brand;
-use App\Models\{Brand, Modelo};
+use App\Models\{Brand, Modelo, Refaccion};
+use Carbon\Carbon;
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\{Response, Validator};
 use Illuminate\Support\Str;
@@ -236,5 +236,24 @@ class CatalogsController extends Controller
             'modelo' => $modelo,
             'message' => 'Modelo actualizado',
         ], JsonResponse::HTTP_OK);
+    }
+
+    public function getRefacciones(): JsonResponse
+    {
+        $refacciones = Refaccion::query()
+            ->get();
+
+        $refacciones->map(function ($refaccion) {
+            if (!is_null($refaccion->Fecha)) {
+                $refaccion->Fecha = Carbon::parse($refaccion->Fecha)->isoFormat('DD [de] MMMM [de] YYYY');
+            }
+
+            return $refaccion;
+        });
+
+        return Response::json(
+            $refacciones,
+            JsonResponse::HTTP_OK
+        );
     }
 }
