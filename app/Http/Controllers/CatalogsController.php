@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Brand, Modelo, Refaccion};
+use App\Models\{Brand, Modelo, Package, Refaccion};
 use Carbon\Carbon;
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\{Response, Validator};
@@ -381,5 +381,21 @@ class CatalogsController extends Controller
         return Response::json([
             'message' => 'Refacción actualizada',
         ], JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * @api {get} /packages Get packages
+     * @return packages
+     */
+    public function getPackages(): JsonResponse
+    {
+        $packages = Package::query()
+            ->with('refacciones.refaccion')
+            ->get();
+
+        return Response::json(
+            $packages,
+            JsonResponse::HTTP_OK
+        );
     }
 }
