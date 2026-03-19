@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Catalogs;
 
 use App\Http\Controllers\Controller;
 use App\Models\Package;
-use Illuminate\Http\{JsonResponse, Request, Response};
-use Illuminate\Support\Str;
+use Illuminate\Http\{JsonResponse, Request};
+use Illuminate\Support\{Facades\Response, Str};
 
 class PackageController extends Controller
 {
