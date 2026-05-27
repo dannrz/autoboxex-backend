@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Vehicles extends Model
 {
     protected $table = 'ClienteVeh';
+    protected $primaryKey = 'IdVehiculo';
 
     public function cliente(): BelongsTo
     {
