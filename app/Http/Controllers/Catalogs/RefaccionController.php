@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\{Number, Str};
 use Illuminate\Support\Facades\{Response, Validator};
+use Illuminate\Validation\Rule;
 
 class RefaccionController extends Controller
 {
@@ -98,15 +99,55 @@ class RefaccionController extends Controller
     /**
      * Update the specified resource in storage.
      * @api {put} /refacciones/{id} Update refaccion
-     * @param Request $request
-     * @return updated refaccion
-     * TODO: validate request and update refaccion in database
      */
-    public function update(Request $request)
+    public function update(Request $request, int $id): JsonResponse
     {
-        return Response::json([
-            'message' => 'Refacción actualizada',
-        ], JsonResponse::HTTP_OK);
+        $refaccion = Refaccion::find($id);
+
+        if (!$refaccion) {
+            return Response::json(
+                ['message' => 'Refacción no encontrada'],
+                JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+
+        $validator = Validator::make($request->all(), [
+            'Calidad'   => ['required', 'string', 'max:25'],
+            'Cantidad'  => ['required', 'numeric'],
+            'Codigo'    => ['nullable', 'string', 'max:25', Rule::unique('Refaccion', 'Codigo')->ignore($id, 'IdRefaccion')],
+            'Marca'     => ['nullable', 'string', 'max:25'],
+            'Precio'    => ['nullable', 'numeric', 'min:0'],
+            'PrecioIva' => ['nullable', 'numeric', 'min:0'],
+            'Refacción' => ['required', 'string', 'max:75', Rule::unique('Refaccion', 'Refacción')->ignore($id, 'IdRefaccion')],
+            'Tipo'      => ['nullable', 'string', 'max:10'],
+            'Unidad'    => ['required', 'string', 'max:10'],
+        ], [
+            'Codigo.unique'    => "El código {$request->Codigo} ya está en uso.",
+            'Refacción.unique' => "La refacción '{$request->Refacción}' ya existe.",
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json(
+                $validator->errors(),
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $validated = $validator->validated();
+
+        $refaccion->update([
+            'Calidad'   => Str::trim($validated['Calidad']),
+            'Cantidad'  => $validated['Cantidad'],
+            'Codigo'    => isset($validated['Codigo']) ? Str::trim($validated['Codigo']) : null,
+            'Marca'     => isset($validated['Marca']) ? Str::trim($validated['Marca']) : null,
+            'Precio'    => $validated['Precio'] ?? null,
+            'PrecioIva' => $validated['PrecioIva'] ?? null,
+            'Refacción' => Str::trim($validated['Refacción']),
+            'Tipo'      => isset($validated['Tipo']) ? Str::trim($validated['Tipo']) : null,
+            'Unidad'    => Str::trim($validated['Unidad']),
+        ]);
+
+        return Response::json($refaccion->fresh(), JsonResponse::HTTP_OK);
     }
 
     /**
