@@ -11,4 +11,6 @@ class Costo extends Model
 
     protected $table = 'costos';
     protected $hidden = ['created_at', 'updated_at'];
+
+    protected $fillable = ['IdMovimiento', 'producto', 'cantidad', 'precio', 'total'];
 }

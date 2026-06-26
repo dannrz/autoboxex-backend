@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ServiciosExport;
-use App\Models\{InOut, Service};
+use App\Models\{Costo, InOut, Precio, Service};
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\{Request, Response as HttpResponse};
 use Illuminate\Support\Facades\{Response, Validator};
@@ -66,7 +66,9 @@ class ExportController extends Controller
             ->where('IdMovimiento', $servicio->IdMovimiento)
             ->get();
 
-        $pdf = Pdf::loadView('pdf.servicio', compact('servicio', 'insumos'))
+        $costos = Costo::where('IdMovimiento', $servicio->IdMovimiento)->get();
+
+        $pdf = Pdf::loadView('pdf.servicio', compact('servicio', 'insumos', 'costos'))
             ->setPaper('letter', 'portrait');
 
         $filename = "orden_servicio_{$servicio->FolioOE}_{$servicio->IdMovimiento}.pdf";
@@ -80,5 +82,81 @@ class ExportController extends Controller
     public function excelAll(): BinaryFileResponse
     {
         return Excel::download(new ServiciosExport(), 'servicios_todos.xlsx');
+    }
+
+    /**
+     * PDF del presupuesto de un servicio.
+     * Params: id (IdMovimiento) o folio (FolioOE)
+     */
+    public function presupuestoPdf(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id'    => ['sometimes', 'integer'],
+            'folio' => ['sometimes', 'integer'],
+        ]);
+
+        if ($validator->fails()) {
+            abort(422, $validator->errors()->first());
+        }
+
+        $query = Service::with(['cliente', 'vehiculo.marca']);
+
+        if ($request->has('id')) {
+            $servicio = $query->findOrFail($request->integer('id'));
+        } elseif ($request->has('folio')) {
+            $servicio = $query->where('FolioOE', $request->integer('folio'))->firstOrFail();
+        } else {
+            abort(422, 'Se requiere id o folio.');
+        }
+
+        $insumos = InOut::with('refaccion')
+            ->where('IdMovimiento', $servicio->IdMovimiento)
+            ->get();
+
+        $costos = Costo::where('IdMovimiento', $servicio->IdMovimiento)->get();
+
+        $pdf = Pdf::loadView('pdf.presupuesto', compact('servicio', 'insumos', 'costos'))
+            ->setPaper('letter', 'portrait');
+
+        $folio    = $servicio->FolioOE ?? $servicio->IdMovimiento;
+        $filename = "presupuesto_OE{$folio}.pdf";
+
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Búsqueda de servicios para el módulo de presupuesto.
+     */
+    public function searchPresupuesto(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'folio'     => ['sometimes', 'nullable', 'integer'],
+            'placas'    => ['sometimes', 'nullable', 'string'],
+            'idCliente' => ['sometimes', 'nullable', 'integer'],
+            'fecha'     => ['sometimes', 'nullable', 'date'],
+        ]);
+
+        if ($validator->fails()) {
+            return Response::json($validator->errors(), 422);
+        }
+
+        $query = Service::with(['cliente', 'vehiculo.marca'])
+            ->orderBy('FolioOE', 'desc')
+            ->orderBy('IdMovimiento', 'desc');
+
+        if ($request->filled('folio'))
+            $query->where('FolioOE', $request->integer('folio'));
+
+        if ($request->filled('placas'))
+            $query->whereHas('vehiculo', fn($q) =>
+                $q->where('Placas', 'like', '%'.$request->string('placas').'%'));
+
+        if ($request->filled('idCliente'))
+            $query->where('IdCliente', $request->integer('idCliente'));
+
+        if ($request->filled('fecha'))
+            $query->whereDate('FEntrada', $request->input('fecha'));
+
+        return Response::json($query->limit(200)->get(), 200);
     }
 }

@@ -40,3 +40,6 @@ Route::get('/modelos', 'App\Http\Controllers\ServicesController@getModelos')
 
 Route::post('/', "App\Http\Controllers\ServicesController@store")
     ->name('services.store');
+
+Route::post('/movimiento', "App\Http\Controllers\ServicesController@storeMovimiento")
+    ->name('services.movimiento');

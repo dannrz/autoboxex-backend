@@ -178,6 +178,37 @@
     <div class="obs">{{ $servicio->{'Observación'} }}</div>
     @endif
 
+    {{-- COSTOS DE SERVICIO --}}
+    @if($costos->count())
+    <div class="section-title">💼 Servicios / Costos</div>
+    <table class="insumos">
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th style="text-align:right;">Cant.</th>
+                <th style="text-align:right;">Precio</th>
+                <th style="text-align:right;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($costos as $c)
+            <tr>
+                <td>{{ $c->producto }}</td>
+                <td style="text-align:right;">{{ $c->cantidad }}</td>
+                <td style="text-align:right;">${{ number_format($c->precio, 2) }}</td>
+                <td style="text-align:right;">${{ number_format($c->total, 2) }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align:right;">Subtotal servicios:</td>
+                <td style="text-align:right;">${{ number_format($costos->sum('total'), 2) }}</td>
+            </tr>
+        </tfoot>
+    </table>
+    @endif
+
     {{-- INSUMOS --}}
     @if($insumos->count())
     <div class="section-title">🔧 Insumos / Refacciones</div>
