@@ -28,3 +28,15 @@ Route::get('/oe', 'App\Http\Controllers\ServicesController@getInOrders')
 Route::get('/plates', "App\Http\Controllers\ServicesController@getPlates")
     ->name('plates.all')
     ->middleware('multiadmin');
+
+Route::get('/search', 'App\Http\Controllers\ServicesController@search')
+    ->name('services.search');
+
+Route::get('/marcas', 'App\Http\Controllers\ServicesController@getMarcas')
+    ->name('marcas.all');
+
+Route::get('/modelos', 'App\Http\Controllers\ServicesController@getModelos')
+    ->name('modelos.all');
+
+Route::post('/', "App\Http\Controllers\ServicesController@store")
+    ->name('services.store');

@@ -10,6 +10,13 @@ class Vehicles extends Model
 {
     protected $table = 'ClienteVeh';
     protected $primaryKey = 'IdVehiculo';
+    public $timestamps = false;
+    public $incrementing = false;
+
+    protected $fillable = [
+        'IdCliente', 'IdVehiculo', 'Placas', 'IdMarca',
+        'Modelo', 'Año', 'Color', 'VIN', 'Serie',
+    ];
 
     public function cliente(): BelongsTo
     {

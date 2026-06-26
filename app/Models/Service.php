@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Service extends Model
 {
     protected $table = 'Servicio';
+    protected $primaryKey = 'IdMovimiento';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'IdCliente', 'TipMov', 'FolioOE', 'Estado',
+        'FEntrada', 'FSalida', 'IdVehiculo', 'Kms',
+        'Ingreso', 'DiasPS', 'Observación', 'Autoriza', 'IdUsuario',
+    ];
 
     public function cliente(): BelongsTo
     {
