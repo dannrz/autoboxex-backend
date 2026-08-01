@@ -39,9 +39,18 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'Marca' => ['required', 'string', 'max:255', 'unique:Marca,Marca'],
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'Marca' => ['required', 'string', 'max:255', 'unique:Marca,Marca'],
+            ],
+            [
+                'Marca.required' => 'El campo Marca es obligatorio.',
+                'Marca.string' => 'El campo Marca debe ser una cadena de texto.',
+                'Marca.max' => 'El campo Marca no debe exceder los 255 caracteres.',
+                'Marca.unique' => "La {$request->Marca} ya existe en la base de datos.",
+            ]
+        );
 
         if ($validator->fails()) {
             return Response::json(

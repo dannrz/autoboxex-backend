@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('login', 'App\Http\Controllers\AuthController@login')->name('auth.login');
-Route::get('logout', 'App\Http\Controllers\AuthController@logout')->name('auth.logout')->middleware('auth:sanctum');
-Route::post('request-password-change', 'App\Http\Controllers\UserController@requestPasswordRestore')->name('auth.requestPasswordChange');
+Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+Route::get('logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth:sanctum');
+Route::post('request-password-change', [UserController::class, 'requestPasswordRestore'])->name('auth.requestPasswordChange');

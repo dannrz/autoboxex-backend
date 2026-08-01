@@ -8,6 +8,7 @@ class Brand extends Model
 {
     protected $table = 'Marca';
     protected $primaryKey = 'IdMarca';
+    public $incrementing = false;
 
     public $timestamps = false;
 

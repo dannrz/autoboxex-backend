@@ -84,15 +84,17 @@ class RefaccionController extends Controller
             'Codigo' => Str::trim($validated['Codigo']),
             'Marca' => Str::trim($validated['Marca']),
             'Precio' => $validated['Precio'],
+            'Fecha' => Carbon::now()->toDateString(),
             'PrecioIva' => $validated['PrecioIva'],
             'Refacción' => Str::trim($validated['Refacción']),
             'Tipo' => Str::trim($validated['Tipo']),
             'Unidad' => Str::trim($validated['Unidad']),
         ]);
 
-        return Response::json([
+        return Response::json(
             $refaccion,
-        ], JsonResponse::HTTP_CREATED);
+            JsonResponse::HTTP_CREATED
+        );
     }
 
     /**
