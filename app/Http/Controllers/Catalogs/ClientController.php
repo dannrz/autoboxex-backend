@@ -11,26 +11,42 @@ class ClientController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
+     * Note: vehicles are intentionally NOT eager loaded here, some clients
+     * have thousands of vehicles which would bloat the payload. They are
+     * fetched on demand and paginated via `vehicles()`.
      */
     public function index(): JsonResponse
     {
-        $clients = Cliente::query()
-            ->with('vehiculos', function ($vehiculo) {
-                $vehiculo->with('marca');
-            })
-            ->get()
-            ->map(function ($client) {
-                $client->vehiculos->each(function ($vehiculo) {
-                    if ($vehiculo->marca) {
-                        $vehiculo->marca->Marca = Str::trim($vehiculo->marca->Marca);
-                    }
-                });
-
-                return $client;
-            });
+        $clients = Cliente::query()->get();
 
         return Response::json(
             $clients,
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    /**
+     * Display a paginated listing of the vehicles that belong to a client.
+     */
+    public function vehicles(string $client, Request $request): JsonResponse
+    {
+        $perPage = (int) $request->query('perPage', 10);
+
+        $vehicles = Cliente::findOrFail($client)
+            ->vehiculos()
+            ->with('marca')
+            ->paginate($perPage)
+            ->through(function ($vehiculo) {
+                if ($vehiculo->marca) {
+                    $vehiculo->marca->Marca = Str::trim($vehiculo->marca->Marca);
+                }
+
+                return $vehiculo;
+            });
+
+        return Response::json(
+            $vehicles,
             JsonResponse::HTTP_OK
         );
     }
