@@ -48,7 +48,7 @@ class BrandController extends Controller
                 'Marca.required' => 'El campo Marca es obligatorio.',
                 'Marca.string' => 'El campo Marca debe ser una cadena de texto.',
                 'Marca.max' => 'El campo Marca no debe exceder los 255 caracteres.',
-                'Marca.unique' => "La {$request->Marca} ya existe en la base de datos.",
+                'Marca.unique' => "La marca {$request->Marca} ya existe en la base de datos.",
             ]
         );
 
