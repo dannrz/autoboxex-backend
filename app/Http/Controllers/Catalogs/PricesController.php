@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Price;
 use Illuminate\Http\{JsonResponse, Request, Response as HttpResponse};
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Number;
 
 class PricesController extends Controller
 {
@@ -14,7 +15,11 @@ class PricesController extends Controller
      */
     public function index(): JsonResponse
     {
-        $prices = Price::all();
+        $prices = Price::all()->map(fn($price) => [
+            'IdProducto' => $price->IdProducto,
+            'Producto' => $price->Producto,
+            'Precio' => '$' . Number::format((float) $price->Precio, 2),
+        ]);
 
         return Response::json(
             $prices,

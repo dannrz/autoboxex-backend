@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Catalogs\PricesController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', '');
+Route::get('/', [PricesController::class, 'index']);
