@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Catalogs;
 use App\Http\Controllers\Controller;
 use App\Models\Price;
 use Illuminate\Http\{JsonResponse, Request, Response as HttpResponse};
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Number;
+use Illuminate\Support\{Facades\Response, Number};
 
 class PricesController extends Controller
 {
@@ -23,6 +22,20 @@ class PricesController extends Controller
 
         return Response::json(
             $prices,
+            HttpResponse::HTTP_OK
+        );
+    }
+
+    /**
+     * Get the last ID of the prices.
+     * @return JsonResponse
+     */
+    public function lastId(): JsonResponse
+    {
+        $lastId = Price::max('IdProducto');
+
+        return Response::json(
+            ['lastId' => $lastId],
             HttpResponse::HTTP_OK
         );
     }
